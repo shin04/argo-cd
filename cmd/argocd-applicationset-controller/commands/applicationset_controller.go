@@ -20,6 +20,7 @@ import (
 	"github.com/argoproj/argo-cd/v2/reposerver/askpass"
 	"github.com/argoproj/argo-cd/v2/util/env"
 	"github.com/argoproj/argo-cd/v2/util/github_app"
+	"github.com/argoproj/argo-cd/v2/util/healthz"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -210,6 +211,7 @@ func NewCommand() *cobra.Command {
 
 func startWebhookServer(webhookHandler *webhook.WebhookHandler, webhookAddr string) {
 	mux := http.NewServeMux()
+	healthz.ServeHealthCheck(mux, nil)
 	mux.HandleFunc("/api/webhook", webhookHandler.Handler)
 	go func() {
 		log.Info("Starting webhook server")
